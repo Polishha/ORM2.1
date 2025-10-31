@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Новостной сайт</title>
+    <style>
+        .article {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        .article img {
+            max-width: 300px;
+            height: auto;
+        }
+        .badge {
+            padding: 5px 10px;
+            margin: 2px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .badge-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .badge-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Новостной сайт</h1>
+
+    {% for article in articles %}
+        <div class="article">
+            <h2>{{ article.title }}</h2>
+
+            {% if article.image %}
+                <img src="{{ article.image.url }}" alt="{{ article.title }}">
+            {% endif %}
+
+            <p><strong>Дата публикации:</strong> {{ article.published_at|date:"d.m.Y H:i" }}</p>
+
+            <div class="tags">
+                <strong>Разделы:</strong>
+                {% for scope in article.scopes.all %}
+                    <span class="badge {% if scope.is_main %}badge-primary{% else %}badge-secondary{% endif %}">
+                        {{ scope.tag.name }}
+                    </span>
+                {% empty %}
+                    <span>Нет разделов</span>
+                {% endfor %}
+            </div>
+
+            <p>{{ article.text|truncatewords:50 }}</p>
+            <a href="{% url 'articles:article_detail' article.id %}">Читать далее</a>
+        </div>
+    {% empty %}
+        <p>Статей пока нет.</p>
+    {% endfor %}
+</body>
+</html>
